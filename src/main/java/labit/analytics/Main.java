@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -14,10 +15,12 @@ import okhttp3.Response;
 
 public class Main {
 
-    private static final String CLIENT_ID = "hETiFjq1hJVAEiQsqMSAj9nIgFAvgQtsybvfAiWGWt2sC05Y";
-    private static final String CLIENT_SECRET = "8YTVTE3m35mrgifD2yRIUGeorizxAS6JrvGIDKNCUboTChTU9bFgyUFgNVBxtxKt";
-    private static final String AUTH_URL = "https://developer.api.autodesk.com/authentication/v2/token";
-
+    private static final Dotenv dotenv = Dotenv.load();
+    
+    private static final String CLIENT_ID = dotenv.get("CLIENT_ID");
+    private static final String CLIENT_SECRET = dotenv.get("CLIENT_SECRET");
+    private static final String AUTH_URL = dotenv.get("AUTH_URL");
+    
     public static void main(String[] args) {
         try {
             // Obtener el token de acceso
