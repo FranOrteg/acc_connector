@@ -46,11 +46,15 @@ public class Main {
                 System.out.println("No root folder found for Project ID: " + projectId);
             }
 
+            // Detalles de los directorios superiores a los que pertenece un proyecto
+            listFolderDetail(accessToken, hubId, projectId);
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /* OBTENER EL TOKEN DE ACCESO */
     public static String getAccessToken() throws IOException {
         OkHttpClient client = new OkHttpClient();
 
@@ -78,6 +82,7 @@ public class Main {
         }
     }
 
+    /* LISTAR LOS HUBS */
     public static void listHubs(String accessToken) throws IOException {
         OkHttpClient client = new OkHttpClient();
 
@@ -97,6 +102,8 @@ public class Main {
         }
     }
 
+    /* ************************ PROYECTOS ************************ */
+    /* LISTAR LOS PROYECTOS */
     public static void listProjects(String accessToken, String hubId) throws IOException {
         OkHttpClient client = new OkHttpClient();
 
@@ -116,6 +123,9 @@ public class Main {
         }
     }
 
+
+    /* ************************ DIRECTORIOS ************************ */
+    /* LISTAR LA CARPETA RAIZ DE LOS PROYECTOS */
     public static String listRootFolders(String accessToken, String projectId) throws IOException {
         OkHttpClient client = new OkHttpClient();
 
@@ -152,6 +162,41 @@ public class Main {
         }
     }
 
+    /* OBTENER LOS DETALLES DE LAS CARTERAS SUPERIORES A LAS QUE PERTENECEN LOS PROYECTOS */
+    public static String listFolderDetail(String accessToken, String hubId, String projectId) throws IOException {
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("https://developer.api.autodesk.com/project/v1/hubs/" + hubId + "/projects/" + projectId + "/topFolders")
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+
+            String responseBody = response.body().string();
+            JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+            JsonArray folders = json.getAsJsonArray("data");
+
+            if (folders.size() == 0) {
+                System.out.println("No root folders found for Project ID: " + projectId);
+                return null;
+            }
+
+            JsonObject folder = folders.get(0).getAsJsonObject();
+            String folderId = folder.get("id").getAsString();
+            String folderName = folder.getAsJsonObject("attributes").get("name").getAsString();
+            System.out.println("Folder ID: " + folderId + ", Name: " + folderName);
+
+            return folderId;
+        }
+    }
+
+    /* LISTAR EL CONTENIDO DE LOS DIRECTORIOS */
     public static void listFolderContents(String accessToken, String projectId, String folderId) throws IOException {
         OkHttpClient client = new OkHttpClient();
 
