@@ -1,0 +1,14 @@
+# Ignorar archivos de configuración de entorno
+.env
+
+# Ignorar directorio de salida de compilación
+/target/
+
+# Ignorar archivos de configuración de IDE
+*.iml
+.idea/
+.vscode/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db

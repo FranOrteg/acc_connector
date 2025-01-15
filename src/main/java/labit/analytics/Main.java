@@ -47,8 +47,9 @@ public class Main {
             }
 
             // Detalles de los directorios superiores a los que pertenece un proyecto
-            listFolderDetail(accessToken, hubId, projectId);
-            
+            String folderprojectId = listFolderDetail(accessToken, hubId, projectId);
+            listFolderById(accessToken, projectId, folderprojectId);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -162,7 +163,7 @@ public class Main {
         }
     }
 
-    /* OBTENER LOS DETALLES DE LAS CARTERAS SUPERIORES A LAS QUE PERTENECEN LOS PROYECTOS */
+    /* OBTENER LOS DETALLES DE LAS CARPETAS SUPERIORES A LAS QUE PERTENECEN LOS PROYECTOS */
     public static String listFolderDetail(String accessToken, String hubId, String projectId) throws IOException {
 
         OkHttpClient client = new OkHttpClient();
@@ -224,6 +225,31 @@ public class Main {
         }
     }
 
+    /*  LISTAR LA CARPETA POR ID */
+    public static void listFolderById(String accessToken, String projectId, String folderId) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("https://developer.api.autodesk.com/data/v1/projects/" + projectId + "/folders/" + folderId)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+
+            String responseBody = response.body().string();
+            JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+            JsonObject folder = json.getAsJsonObject("data");
+
+            String folderName = folder.getAsJsonObject("attributes").get("name").getAsString();
+            System.out.println("Folder ID: " + folderId + ", Name: " + folderName);
+        }
+    }
+
+    /* PARSEAR Y MOSTRAR LOS PROYECTOS */
     public static void parseAndPrintProjects(String responseBody) {
         JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
         JsonArray projects = json.getAsJsonArray("data");
@@ -235,4 +261,60 @@ public class Main {
             System.out.println("Project ID: " + projectId + ", Name: " + projectName);
         }
     }
+
+    /* OBTENER EL VERSION ID DE LOS PROYECTOS */
+    /* public static void getVersionId(String accessToken, String projectId) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" + projectId + "/versions")
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+
+            String responseBody = response.body().string();
+            JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+            JsonArray versions = json.getAsJsonArray("data");
+
+            for (int i = 0; i < versions.size(); i++) {
+                JsonObject version = versions.get(i).getAsJsonObject();
+                String versionId = version.get("id").getAsString();
+                String versionName = version.getAsJsonObject("attributes").get("name").getAsString();
+                System.out.println("Version ID: " + versionId + ", Name: " + versionName);
+            }
+        }
+    } */
+
+    /* VERIFICAR LOS FORMATOS SOPORTADOS PARA LA DESCARGA */
+    /* public static void verifyFormat(String accessToken, String projectId, String versionId) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("https://developer.api.autodesk.com/data/v1/projects/"+ projectId + "/versions/" + versionId + "/downloadFormats/formats")
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+
+            String responseBody = response.body().string();
+            JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+            JsonArray formats = json.getAsJsonArray("data");
+
+            for (int i = 0; i < formats.size(); i++) {
+                JsonObject format = formats.get(i).getAsJsonObject();
+                String formatId = format.get("id").getAsString();
+                String formatName = format.getAsJsonObject("attributes").get("name").getAsString();
+                System.out.println("Format ID: " + formatId + ", Name: " + formatName);
+            }
+        }
+    } */
 }
