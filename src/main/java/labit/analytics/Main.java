@@ -17,15 +17,17 @@ public class Main {
 
     private static final Dotenv dotenv = Dotenv.load();
     
-    private static final String CLIENT_ID = dotenv.get("CLIENT_ID");
-    private static final String CLIENT_SECRET = dotenv.get("CLIENT_SECRET");
+    private static final String CLIENT_ID = dotenv.get("CLIENT_ID_BB");
+    private static final String CLIENT_SECRET = dotenv.get("CLIENT_SECRET_BB");
     private static final String AUTH_URL = dotenv.get("AUTH_URL");
     
     public static void main(String[] args) {
         try {
             // Obtener el token de acceso
             String accessToken = getAccessToken();
+            System.out.println("");
             System.out.println("Access Token: " + accessToken);
+            System.out.println("");
 
             // Listar hubs
             listHubs(accessToken);
@@ -35,6 +37,7 @@ public class Main {
 
             // Listar proyectos del hub
             listProjects(accessToken, hubId);
+            System.out.println("");
 
             // Explorar un proyecto específico
             String projectId = "b.4f95a7b1-9e87-4399-8927-4acb2349134b";
@@ -44,6 +47,7 @@ public class Main {
                 listFolderContents(accessToken, projectId, folderId);
             } else {
                 System.out.println("No root folder found for Project ID: " + projectId);
+                System.out.println("");
             }
 
             // Detalles de los directorios superiores a los que pertenece un proyecto
@@ -121,6 +125,7 @@ public class Main {
 
             String responseBody = response.body().string();
             System.out.println("Hubs: " + responseBody);
+            System.out.println("");
         }
     }
 
@@ -267,7 +272,8 @@ public class Main {
 
         try (Response response = client.newCall(request).execute()) {
             if (response.code() == 404) {
-                System.out.println("Project ID " + projectId + " does not have root folders or does not exist.");
+                System.out.println("Root, Project ID " + projectId + " does not have root folders or does not exist.");
+                System.out.println("");
                 return null;
             }
             if (!response.isSuccessful()) {
@@ -287,6 +293,7 @@ public class Main {
             String folderId = folder.get("id").getAsString();
             String folderName = folder.getAsJsonObject("attributes").get("name").getAsString();
             System.out.println("Folder ID: " + folderId + ", Name: " + folderName);
+            System.out.println("");
 
             return folderId;
         }
@@ -314,13 +321,15 @@ public class Main {
 
             if (folders.size() == 0) {
                 System.out.println("No root folders found for Project ID: " + projectId);
+                System.out.println("");
                 return null;
             }
 
             JsonObject folder = folders.get(0).getAsJsonObject();
             String folderId = folder.get("id").getAsString();
             String folderName = folder.getAsJsonObject("attributes").get("name").getAsString();
-            System.out.println("Folder ID: " + folderId + ", Name: " + folderName);
+            System.out.println("Folder Detailed, ID: " + folderId + ", Name: " + folderName);
+            System.out.println("");
 
             return folderId;
         }
