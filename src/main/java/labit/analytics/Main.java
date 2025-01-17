@@ -30,10 +30,13 @@ public class Main {
             System.out.println("");
 
             // Listar hubs
-            listHubs(accessToken);
+            getHubs(accessToken);
 
             // ID del hub a explorar
             String hubId = "b.1bb899d4-8dd4-42d8-aefd-6c0e35acd825";
+
+            // listar los datos de un hub en especifico
+            getHubDataById(accessToken, hubId);
 
             // Listar proyectos del hub
             listProjects(accessToken, hubId);
@@ -41,6 +44,10 @@ public class Main {
 
             // Explorar un proyecto específico
             String projectId = "b.4f95a7b1-9e87-4399-8927-4acb2349134b";
+            
+            // Obtener los datos de un proyecto por el ID de proyecto
+            getProjectById(accessToken,hubId,projectId);
+            
             String folderId = listRootFolders(accessToken, projectId);
 
             if (folderId != null) {
@@ -88,7 +95,7 @@ public class Main {
                 .add("client_id", CLIENT_ID)
                 .add("client_secret", CLIENT_SECRET)
                 .add("grant_type", "client_credentials")
-                .add("scope", "data:read data:write")
+                .add("scope", "data:create data:read data:write")
                 .build();
 
         Request request = new Request.Builder()
@@ -109,7 +116,7 @@ public class Main {
     }
 
     /* LISTAR LOS HUBS */
-    public static void listHubs(String accessToken) throws IOException {
+    public static void getHubs(String accessToken) throws IOException {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -126,6 +133,28 @@ public class Main {
             String responseBody = response.body().string();
             System.out.println("Hubs: " + responseBody);
             System.out.println("");
+        }
+    }
+
+    public static void getHubDataById(String accessToken, String hubId) throws IOException{
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("https://developer.api.autodesk.com/project/v1/hubs/" + hubId)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+
+            String responseBody = response.body().string();
+            System.out.println("Hub Data: " + responseBody);
+            System.out.println("");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -149,6 +178,65 @@ public class Main {
             parseAndPrintProjects(responseBody);
         }
     }
+
+    /* Devuelve un proyecto para un determinado project_id */
+    public static void getProjectById(String accessToken, String hubId, String projectId) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("https://developer.api.autodesk.com/project/v1/hubs/" + hubId + "/projects/" + projectId)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                .build();
+        
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+                }
+
+            String responseBody = response.body().string();
+            System.out.println("Project Data By ID: " + responseBody);
+            System.out.println("");
+        }
+    }
+
+    /* OBTENER LOS DETALLES DE LAS CARPETAS SUPERIORES A LAS QUE PERTENECEN LOS PROYECTOS */
+    public static String listFolderDetail(String accessToken, String hubId, String projectId) throws IOException {
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("https://developer.api.autodesk.com/project/v1/hubs/" + hubId + "/projects/" + projectId + "/topFolders")
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+
+            String responseBody = response.body().string();
+            // System.out.println("folderDetails" + responseBody);
+            JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+            JsonArray folders = json.getAsJsonArray("data");
+
+            if (folders.size() == 0) {
+                System.out.println("No root folders found for Project ID: " + projectId);
+                System.out.println("");
+                return null;
+            }
+
+            JsonObject folder = folders.get(0).getAsJsonObject();
+            String folderId = folder.get("id").getAsString();
+            String folderName = folder.getAsJsonObject("attributes").get("name").getAsString();
+            System.out.println("Folder Detailed, ID: " + folderId + ", Name: " + folderName);
+            System.out.println("");
+
+            return folderId;
+        }
+    }
+
 
     /* SOLICITAR DESCARGA DE ARCHIVO */   
     public static void createDownload(String accessToken, String projectId, String versionId, String fileType) throws IOException {
@@ -293,42 +381,6 @@ public class Main {
             String folderId = folder.get("id").getAsString();
             String folderName = folder.getAsJsonObject("attributes").get("name").getAsString();
             System.out.println("Folder ID: " + folderId + ", Name: " + folderName);
-            System.out.println("");
-
-            return folderId;
-        }
-    }
-
-    /* OBTENER LOS DETALLES DE LAS CARPETAS SUPERIORES A LAS QUE PERTENECEN LOS PROYECTOS */
-    public static String listFolderDetail(String accessToken, String hubId, String projectId) throws IOException {
-
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder()
-                .url("https://developer.api.autodesk.com/project/v1/hubs/" + hubId + "/projects/" + projectId + "/topFolders")
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .addHeader("Content-Type", "application/json")
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
-            }
-
-            String responseBody = response.body().string();
-            JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
-            JsonArray folders = json.getAsJsonArray("data");
-
-            if (folders.size() == 0) {
-                System.out.println("No root folders found for Project ID: " + projectId);
-                System.out.println("");
-                return null;
-            }
-
-            JsonObject folder = folders.get(0).getAsJsonObject();
-            String folderId = folder.get("id").getAsString();
-            String folderName = folder.getAsJsonObject("attributes").get("name").getAsString();
-            System.out.println("Folder Detailed, ID: " + folderId + ", Name: " + folderName);
             System.out.println("");
 
             return folderId;
