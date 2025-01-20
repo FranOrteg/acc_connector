@@ -45,6 +45,8 @@ public class Main {
             // Explorar un proyecto específico
             String projectId = "b.4f95a7b1-9e87-4399-8927-4acb2349134b";
             
+            String folderId2 = "urn:adsk.wipprod:fs.folder:co.LVs6tq9ZRpynB8ASuBy-9g";
+
             // Obtener los datos de un proyecto por el ID de proyecto
             getProjectById(accessToken,hubId,projectId);
             
@@ -66,6 +68,10 @@ public class Main {
                 System.out.println("No items found in folder.");
                 return;
             }
+
+            // Obtener la carpeta principal
+            listPrincipalFolder(accessToken, projectId, folderId2);
+
     
             // Obtener el version_id del item
             String versionId = getVersionId(accessToken, projectId, itemId);
@@ -483,10 +489,35 @@ public class Main {
 
         System.out.println("No items found in folder: " + folderId);
         return null; // Ningún archivo encontrado en este folder o subcarpetas
+        }
     }
-}
 
-    
+    /* Devuelve la carpeta principal (si existe). En un proyecto, las subcarpetas y los elementos de recursos se almacenan en una carpeta, excepto la carpeta raíz, que no tiene una carpeta principal propia */
+    public static void listPrincipalFolder(String accessToken, String projectId, String folderId) throws IOException{
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("https://developer.api.autodesk.com/data/v1/projects/" + projectId + "/folders/" + folderId + "/parent")
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try(Response response = client.newCall(request).execute()){
+            if(!response.isSuccessful()){
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+
+            String responseBody = response.body().string();
+            JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+            JsonObject folder = json.getAsJsonObject("data");
+
+            String folderName = folder.getAsJsonObject("attributes").get("name").getAsString();
+            System.out.println("Folder ID: " + folderId + ", Name: " + folderName);
+        }catch(IOException e){
+            System.out.println("No principal folder found for folder ID: " + folderId);
+        }
+    }
+
 
     /* PARSEAR Y MOSTRAR LOS PROYECTOS */
     public static void parseAndPrintProjects(String responseBody) {
