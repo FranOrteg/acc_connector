@@ -204,4 +204,38 @@ public class Folders {
             System.out.println("No principal folder found for folder ID: " + folderId);
         }
     }
+
+    /* Devuelve una colección de links para el determinado folder_id */
+
+    public static void listFolderLinks(String accessToken, String projectId, String folderId) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+    
+        Request request = new Request.Builder()
+                .url("https://developer.api.autodesk.com/data/v1/projects/" + projectId + "/folders/" + folderId + "/relationships/links")
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                .build();
+    
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+    
+            String responseBody = response.body().string();
+            JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+    
+            JsonArray dataArray = json.getAsJsonArray("data");
+            if (dataArray.size() == 0) {
+                System.out.println("No data available in the folder links.");
+                return;
+            }
+    
+            // Procesar cada elemento del array
+            for (int i = 0; i < dataArray.size(); i++) {
+                JsonObject element = dataArray.get(i).getAsJsonObject();
+                System.out.println("Element " + i + ": " + element);
+            }
+        }
+    }
+    
 }

@@ -66,6 +66,9 @@ public class Main {
             // Devuelve los recursos
             Folders.listFolderRelations(accessToken, projectId, folderprojectId);
 
+            /*  */
+            Folders.listFolderLinks(accessToken, projectId, folderprojectId);
+
             // Obtener un item dentro del folder
             String itemId = Folders.findFirstItemInFolder(accessToken, projectId, folderprojectId);
             if (itemId == null) {
