@@ -61,6 +61,10 @@ public class Main {
 
             // Detalles de los directorios superiores a los que pertenece un proyecto
             String folderprojectId = listFolderDetail(accessToken, hubId, projectId);
+            System.out.println(folderprojectId);
+
+            // Devuelve los recursos
+            listFolderRelations(accessToken, projectId, folderprojectId);
 
             // Obtener un item dentro del folder
             String itemId = findFirstItemInFolder(accessToken, projectId, folderprojectId);
@@ -448,6 +452,35 @@ public class Main {
         }
     }
 
+    /* Devuelve los recursos ( items, folders, y versions) que tienen una relación personalizada con el folder_id */
+    public static void listFolderRelations(String accessToken, String projectId, String folderId) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("https://developer.api.autodesk.com/data/v1/projects/" + projectId + "/folders/" + folderId + "/refs")
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+
+            String responseBody = response.body().string();
+            JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+            JsonArray items = json.getAsJsonArray("data");
+
+            for (int i = 0; i < items.size(); i++) {
+                JsonObject item = items.get(i).getAsJsonObject();
+                String itemId = item.get("id").getAsString();
+                String itemName = item.getAsJsonObject("attributes").get("name").getAsString();
+                System.out.println("Item ID: " + itemId + ", Name: " + itemName);
+
+            }
+
+        }
+    }
     
     public static String findFirstItemInFolder(String accessToken, String projectId, String folderId) throws IOException {
     OkHttpClient client = new OkHttpClient();
