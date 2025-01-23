@@ -36,7 +36,7 @@ public class Main {
             String hubId = "b.1bb899d4-8dd4-42d8-aefd-6c0e35acd825";
 
             // listar los datos de un hub en especifico
-            getHubDataById(accessToken, hubId);
+            // getHubDataById(accessToken, hubId);
 
             // Listar proyectos del hub
             Projects.listProjects(accessToken, hubId);
@@ -290,7 +290,11 @@ public class Main {
             JsonObject project = projects.get(i).getAsJsonObject();
             String projectId = project.get("id").getAsString();
             String projectName = project.getAsJsonObject("attributes").get("name").getAsString();
-            System.out.println("Project ID: " + projectId + ", Name: " + projectName);
+            String rootFolferId = project.getAsJsonObject("relationships").getAsJsonObject("rootFolder").getAsJsonObject("data").get("id").getAsString();
+            System.out.println(
+                "Project ID: " + projectId + 
+                "\nName: " + projectName + 
+                "\nRoot Folder ID: " + rootFolferId);
         }
     }
 }
