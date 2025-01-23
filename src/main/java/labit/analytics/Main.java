@@ -43,21 +43,24 @@ public class Main {
             System.out.println("");
 
             // Explorar un proyecto específico
-            String projectId = "b.4f95a7b1-9e87-4399-8927-4acb2349134b";
+            String projectId = "b.91fbde24-f99b-48d0-bf20-7a167c14ddaa";
+            String folderId = "urn:adsk.wipprod:fs.folder:co.2iB8dSwZRRSyplYRrsGRqg";
             
-            String folderId2 = "urn:adsk.wipprod:fs.folder:co.LVs6tq9ZRpynB8ASuBy-9g";
+            String folderId2 = "urn:adsk.wipprod:fs.folder:co.2iB8dSwZRRSyplYRrsGRqg";
 
             // Obtener los datos de un proyecto por el ID de proyecto
-            Projects.getProjectById(accessToken,hubId,projectId);
+            // Projects.getProjectById(accessToken,hubId,projectId);
             
-            String folderId = Folders.listRootFolders(accessToken, projectId);
+            /* String folderId = Folders.listRootFolders(accessToken, projectId);
 
             if (folderId != null) {
                 Folders.listFolderContents(accessToken, projectId, folderId);
             } else {
                 System.out.println("No root folder found for Project ID: " + projectId);
                 System.out.println("");
-            }
+            } */
+
+            Folders.listFolderContents(accessToken, projectId, folderId);
 
             // Detalles de los directorios superiores a los que pertenece un proyecto
             String folderprojectId = Projects.listFolderDetail(accessToken, hubId, projectId);

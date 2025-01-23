@@ -74,8 +74,8 @@ public class Folders {
                 JsonObject item = items.get(i).getAsJsonObject();
                 String itemId = item.get("id").getAsString();
                 String itemName = item.getAsJsonObject("attributes").get("name").getAsString();
-                System.out.println("Item ID: " + itemId + ", Name: " + itemName);
-        
+                System.out.println("Item ID: " + itemId + 
+                                    "\nName: " + itemName);
             }
             
         }
