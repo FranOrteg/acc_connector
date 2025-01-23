@@ -46,8 +46,6 @@ public class Main {
             String projectId = "b.91fbde24-f99b-48d0-bf20-7a167c14ddaa";
             String folderId = "urn:adsk.wipprod:fs.folder:co.2iB8dSwZRRSyplYRrsGRqg";
             
-            String folderId2 = "urn:adsk.wipprod:fs.folder:co.2iB8dSwZRRSyplYRrsGRqg";
-
             // Obtener los datos de un proyecto por el ID de proyecto
             // Projects.getProjectById(accessToken,hubId,projectId);
             
@@ -61,41 +59,46 @@ public class Main {
             } */
 
             Folders.listFolderContents(accessToken, projectId, folderId);
+            System.out.println("");
+
+            String itemId = "urn:adsk.wipprod:fs.folder:co.Gm-ZvCUqS1qnVg1h5PcDhA";
+
+            // Items.dataItem(accessToken, projectId, itemId);
 
             // Detalles de los directorios superiores a los que pertenece un proyecto
-            String folderprojectId = Projects.listFolderDetail(accessToken, hubId, projectId);
-            System.out.println(folderprojectId);
+            //String folderprojectId = Projects.listFolderDetail(accessToken, hubId, projectId);
+            //System.out.println(folderprojectId);
 
             // Devuelve los recursos
-            Folders.listFolderRelations(accessToken, projectId, folderprojectId);
+            //Folders.listFolderRelations(accessToken, projectId, folderprojectId);
 
             /*  */
-            Folders.listFolderLinks(accessToken, projectId, folderprojectId);
+            //Folders.listFolderLinks(accessToken, projectId, folderprojectId);
 
             // Obtener un item dentro del folder
-            String itemId = Folders.findFirstItemInFolder(accessToken, projectId, folderprojectId);
+            /* String itemId = Folders.findFirstItemInFolder(accessToken, projectId, folderprojectId);
             if (itemId == null) {
                 System.out.println("No items found in folder.");
                 return;
-            }
+            } */
 
             // Obtener la carpeta principal
-            Folders.listPrincipalFolder(accessToken, projectId, folderId2);
+            // Folders.listPrincipalFolder(accessToken, projectId, folderId2);
 
     
             // Obtener el version_id del item
-            String versionId = getVersionId(accessToken, projectId, itemId);
+            /* String versionId = getVersionId(accessToken, projectId, itemId);
             if (versionId == null) {
                 System.out.println("No version ID found for item: " + itemId);
                 return;
-            }
+            } */
     
             // Verificar formatos soportados
-            verifyFormats(accessToken, projectId, versionId);
+            // verifyFormats(accessToken, projectId, versionId);
     
             // Crear una descarga en el formato deseado
-            String fileType = "dwf"; // Cambiar según el formato disponible
-            createDownload(accessToken, projectId, versionId, fileType);
+            // String fileType = "dwf"; // Cambiar según el formato disponible
+            // createDownload(accessToken, projectId, versionId, fileType);
     
 
             } catch (IOException e) {

@@ -77,7 +77,6 @@ public class Folders {
                 System.out.println("Item ID: " + itemId + 
                                     "\nName: " + itemName);
             }
-            
         }
     }
 
