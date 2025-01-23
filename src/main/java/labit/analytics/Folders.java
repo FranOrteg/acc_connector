@@ -52,7 +52,7 @@ public class Folders {
     }
 
     /* LISTAR EL CONTENIDO DE LOS DIRECTORIOS */
-    public static void listFolderContents(String accessToken, String projectId, String folderId) throws IOException {
+    public static String listFolderContents(String accessToken, String projectId, String folderId) throws IOException {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -77,9 +77,48 @@ public class Folders {
                 System.out.println("Item ID: " + itemId + 
                                     "\nName: " + itemName);
             }
+            return responseBody;
         }
     }
 
+    /* EXPLORAR SUBCARPETAS */
+    public static void exploreFolder(String accessToken, String projectId, String folderId) {
+        try {
+            // Llamada para obtener el contenido del directorio
+            String response = listFolderContents(accessToken, projectId, folderId);
+    
+            // Parsear la respuesta
+            JsonObject json = JsonParser.parseString(response).getAsJsonObject();
+            JsonArray items = json.getAsJsonArray("data");
+    
+            // Iterar sobre los elementos del directorio
+            for (int i = 0; i < items.size(); i++) {
+                JsonObject item = items.get(i).getAsJsonObject();
+                String type = item.get("type").getAsString(); // Puede ser "folders" o "items"
+    
+                // Validar el nombre y otros atributos para evitar excepciones
+                String itemId = item.has("id") ? item.get("id").getAsString() : "Unknown ID";
+                String itemName = item.has("attributes") && item.getAsJsonObject("attributes").has("name")
+                        ? item.getAsJsonObject("attributes").get("name").getAsString()
+                        : "Unknown Name";
+    
+                // Mostrar información del elemento
+                if (type.equals("folders")) {
+                    System.out.println("Exploring Folder ID: " + itemId + ", Name: " + itemName);
+                    // Llamada recursiva para explorar subcarpeta
+                    exploreFolder(accessToken, projectId, itemId);
+                } else if (type.equals("items")) {
+                    System.out.println("Item ID: " + itemId + ", Name: " + itemName);
+                } else {
+                    System.out.println("Unknown type: " + type);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error exploring folder: " + e.getMessage());
+        }
+    }
+    
+    
     /*  LISTAR LA CARPETA POR ID */
     public static String listFolderById(String accessToken, String projectId, String folderId) throws IOException {
         OkHttpClient client = new OkHttpClient();

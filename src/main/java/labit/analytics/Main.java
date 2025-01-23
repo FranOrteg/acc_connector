@@ -17,8 +17,8 @@ public class Main {
 
     private static final Dotenv dotenv = Dotenv.load();
     
-    private static final String CLIENT_ID = dotenv.get("CLIENT_ID_BB");
-    private static final String CLIENT_SECRET = dotenv.get("CLIENT_SECRET_BB");
+    private static final String CLIENT_ID = dotenv.get("CLIENT_ID");
+    private static final String CLIENT_SECRET = dotenv.get("CLIENT_SECRET");
     private static final String AUTH_URL = dotenv.get("AUTH_URL");
     
     public static void main(String[] args) {
@@ -62,6 +62,10 @@ public class Main {
             System.out.println("");
 
             String itemId = "urn:adsk.wipprod:fs.folder:co.Gm-ZvCUqS1qnVg1h5PcDhA";
+            String itemId2 = "urn:adsk.wipprod:fs.folder:co.Y678WrVARpuqakcPVQIgXg";
+            String itemId3 = "urn:adsk.wipprod:fs.folder:co.CEK-EkKGSWq0dDfl7waJmQ";
+            String itemId4 = "urn:adsk.wipprod:fs.folder:co.QS95ugBYTRK6y2DeB1dTAg";
+            String itemId5 = "urn:adsk.wipprod:fs.folder:co.oEDfGjJsTDiwBBoHgL4xDA";
 
             // Items.dataItem(accessToken, projectId, itemId);
 
@@ -100,10 +104,19 @@ public class Main {
             // String fileType = "dwf"; // Cambiar según el formato disponible
             // createDownload(accessToken, projectId, versionId, fileType);
     
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Folders.listFolderContents(accessToken, projectId, itemId);
+            System.out.println("");
+            Folders.listFolderContents(accessToken, projectId, itemId2);
+            System.out.println("");
+            Folders.listFolderContents(accessToken, projectId, itemId3);
+            System.out.println("");
+            Folders.listFolderContents(accessToken, projectId, itemId4);
+            System.out.println(" ------------------------------------------------- ");
+            Folders.listFolderContents(accessToken, projectId, itemId5);
+            // Folders.exploreFolder(accessToken, projectId, itemId);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /* OBTENER EL TOKEN DE ACCESO */
@@ -155,6 +168,7 @@ public class Main {
         }
     }
 
+    /* LISTAR LOS DATOS DE UN HUB EN ESPECIFICO */
     public static void getHubDataById(String accessToken, String hubId) throws IOException{
         OkHttpClient client = new OkHttpClient();
 
