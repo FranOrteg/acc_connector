@@ -67,17 +67,51 @@ public class Folders {
             }
 
             String responseBody = response.body().string();
+            // System.out.println("API Response: " + responseBody); // DEBUG
+            System.out.println("");
+
             JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+
+            if (!json.has("data") || json.get("data").isJsonNull()) {
+                System.out.println("Error: 'data' no está presente en la respuesta.");
+                return null;
+            }
+
             JsonArray items = json.getAsJsonArray("data");
 
             for (int i = 0; i < items.size(); i++) {
-                JsonObject item = items.get(i).getAsJsonObject();
-                String itemId = item.get("id").getAsString();
-                String itemName = item.getAsJsonObject("attributes").get("name").getAsString();
-                System.out.println("Item ID: " + itemId + 
-                                    "\nName: " + itemName);
+            JsonObject item = items.get(i).getAsJsonObject();
+
+            // Verificar si 'id' y 'type' existen
+            if (!item.has("id") || !item.has("type")) {
+                System.out.println("Error: Item sin 'id' o 'type' en índice " + i);
+                continue;
             }
-            return responseBody;
+
+            String itemId = item.get("id").getAsString();
+            String itemType = item.get("type").getAsString(); // "folders" o "items"
+
+            if (itemType.equals("folders")) {
+                // Solo acceder a 'attributes' si es una carpeta
+                if (item.has("attributes") && item.getAsJsonObject("attributes").has("name")) {
+                    String itemName = item.getAsJsonObject("attributes").get("name").getAsString();
+                    System.out.println("📂 Directorio - ID: " + itemId + " | Nombre: " + itemName);
+                } else {
+                    System.out.println("⚠️ Directorio sin nombre en índice " + i);
+                }
+            } else if (itemType.equals("items")) {
+                // Procesar archivos (.rvt, .nwc, etc.)
+                if (item.has("attributes") && item.getAsJsonObject("attributes").has("displayName")) {
+                    String itemName = item.getAsJsonObject("attributes").get("displayName").getAsString();
+                    System.out.println("📄 Archivo - ID: " + itemId + " | Nombre: " + itemName);
+                } else {
+                    System.out.println("⚠️ Archivo sin nombre en índice " + i);
+                }
+            } else {
+                System.out.println("🔹 Tipo desconocido: " + itemType);
+            }
+        }
+        return responseBody;
         }
     }
 

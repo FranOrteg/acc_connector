@@ -43,8 +43,8 @@ public class Main {
             System.out.println("");
 
             // Explorar un proyecto específico
-            String projectId = "b.91fbde24-f99b-48d0-bf20-7a167c14ddaa";
-            String folderId = "urn:adsk.wipprod:fs.folder:co.2iB8dSwZRRSyplYRrsGRqg";
+            String projectId = "b.76947f01-cc26-47db-9681-fff27e5430ce";
+            String folderId = "urn:adsk.wipprod:fs.folder:co.D7F4NTwdRqqYqMaK-M01Yw";
             
             // Obtener los datos de un proyecto por el ID de proyecto
             // Projects.getProjectById(accessToken,hubId,projectId);
@@ -61,11 +61,11 @@ public class Main {
             Folders.listFolderContents(accessToken, projectId, folderId);
             System.out.println("");
 
-            String itemId = "urn:adsk.wipprod:fs.folder:co.Gm-ZvCUqS1qnVg1h5PcDhA";
-            String itemId2 = "urn:adsk.wipprod:fs.folder:co.Y678WrVARpuqakcPVQIgXg";
-            String itemId3 = "urn:adsk.wipprod:fs.folder:co.CEK-EkKGSWq0dDfl7waJmQ";
-            String itemId4 = "urn:adsk.wipprod:fs.folder:co.QS95ugBYTRK6y2DeB1dTAg";
-            String itemId5 = "urn:adsk.wipprod:fs.folder:co.oEDfGjJsTDiwBBoHgL4xDA";
+            String itemId = "urn:adsk.wipprod:fs.folder:co._HMyOfTySzGn6hpRrYrdvA";
+            String itemId2 = "urn:adsk.wipprod:fs.folder:co.DNfxkrkRTY6TLyLWdQjUTw";
+            //String itemId3 = "urn:adsk.wipprod:fs.folder:co.CEK-EkKGSWq0dDfl7waJmQ";
+            //String itemId4 = "urn:adsk.wipprod:fs.folder:co.QS95ugBYTRK6y2DeB1dTAg";
+            //String itemId5 = "urn:adsk.wipprod:fs.folder:co.oEDfGjJsTDiwBBoHgL4xDA";
 
             // Items.dataItem(accessToken, projectId, itemId);
 
@@ -104,15 +104,21 @@ public class Main {
             // String fileType = "dwf"; // Cambiar según el formato disponible
             // createDownload(accessToken, projectId, versionId, fileType);
     
+            System.out.println("------------------------");
+            System.out.println("");
             Folders.listFolderContents(accessToken, projectId, itemId);
+            System.out.println("");
+            
+            System.out.println("------------------------");
             System.out.println("");
             Folders.listFolderContents(accessToken, projectId, itemId2);
             System.out.println("");
-            Folders.listFolderContents(accessToken, projectId, itemId3);
+
+            /*Folders.listFolderContents(accessToken, projectId, itemId3);
             System.out.println("");
             Folders.listFolderContents(accessToken, projectId, itemId4);
             System.out.println(" ------------------------------------------------- ");
-            Folders.listFolderContents(accessToken, projectId, itemId5);
+            Folders.listFolderContents(accessToken, projectId, itemId5); */
             // Folders.exploreFolder(accessToken, projectId, itemId);
         } catch (IOException e) {
             e.printStackTrace();
@@ -312,9 +318,13 @@ public class Main {
             String projectName = project.getAsJsonObject("attributes").get("name").getAsString();
             String rootFolferId = project.getAsJsonObject("relationships").getAsJsonObject("rootFolder").getAsJsonObject("data").get("id").getAsString();
             System.out.println(
-                "Project ID: " + projectId + 
-                "\nName: " + projectName + 
+                "Name: " + projectName + 
+                "\nProject ID: " + projectId + 
                 "\nRoot Folder ID: " + rootFolferId);
         }
     }
 }
+
+/* Name: 00_Prueba Model Coordination
+Project ID: b.76947f01-cc26-47db-9681-fff27e5430ce
+Root Folder ID: urn:adsk.wipprod:fs.folder:co.D7F4NTwdRqqYqMaK-M01Yw */
