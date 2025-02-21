@@ -112,4 +112,34 @@ public class Versions {
                 return downloadsSet;
         }    
     }
+
+    /* DEVUELVE EL ITEM ASOCIADO A LA VERSION DADA */
+    public static String getItemByVersion(String accessToken, String projectId, String versionId) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("https://developer.api.autodesk.com/data/v1/projects/" + projectId + "/versions/" + versionId + "/item")
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+
+            String responseBody = response.body().string();
+            JSONObject json = new JSONObject(responseBody);
+
+            // Extraemos el ID del item si está presente en la respuesta
+            if (json.has("data") && json.get("data") instanceof JSONObject) {
+                JSONObject dataObject = json.getJSONObject("data");
+                if (dataObject.has("id")) {
+                    return dataObject.getString("id");
+                }
+            }
+            return null; // Si no se encuentra el ID
+        }
+    }
 }
+
