@@ -141,5 +141,50 @@ public class Versions {
             return null; // Si no se encuentra el ID
         }
     }
+
+    /* DEVUELVE UNA COLECCION DE ENLACES PARA UN ITEMID-VERSIONID DADO */
+    public static Set<String> getRelationshipsLinks(String accessToken, String projectId, String versionId) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+    
+        Request request = new Request.Builder()
+             .url("https://developer.api.autodesk.com/data/v1/projects/" + projectId + "/versions/" + versionId + "/relationships/links")
+             .addHeader("Authorization", "Bearer " + accessToken)
+             .addHeader("Content-Type", "application/json")
+             .build();
+    
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+    
+            String responseBody = response.body().string();
+            JSONObject json = new JSONObject(responseBody);
+    
+            Set<String> linksSet = new HashSet<>();
+    
+            if (json.has("data") && json.get("data") instanceof JSONArray) {
+                JSONArray linksArray = json.getJSONArray("data");
+    
+                for (int i = 0; i < linksArray.length(); i++) {
+                    JSONObject linkObj = linksArray.getJSONObject(i);
+    
+                    if (linkObj.has("meta")) {
+                        JSONObject metaObj = linkObj.getJSONObject("meta");
+    
+                        if (metaObj.has("link") && metaObj.get("link") instanceof JSONObject) {
+                            JSONObject linkData = metaObj.getJSONObject("link");
+    
+                            if (linkData.has("href")) {
+                                linksSet.add(linkData.getString("href"));
+                            }
+                        }
+                    }
+                }
+            }
+    
+            return linksSet; 
+        }
+    }
+    
 }
 
