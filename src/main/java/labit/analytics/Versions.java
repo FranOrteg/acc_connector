@@ -93,8 +93,6 @@ public class Versions {
 
                 JSONObject json = new JSONObject(responseBody);
 
-                // Extraer el del set los resultados disponibles
-
                 Set<String> downloadsSet = new HashSet<>();
 
                 if(json.has("data") && json.get("data") instanceof JSONArray){
@@ -138,7 +136,7 @@ public class Versions {
                     return dataObject.getString("id");
                 }
             }
-            return null; // Si no se encuentra el ID
+            return null;
         }
     }
 
