@@ -90,4 +90,34 @@ public class Projects {
             return folderId;
         }
     }
+
+    /* DEVUELVE LOS DETALLES PARA UNA DESCARGA ESPECIFICA */
+    public static void getDownloadDetails(String accessToken, String projectId, String downloadId) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+    
+        // Construimos la URL con projectId y downloadId
+        String url = "https://developer.api.autodesk.com/data/v1/projects/" 
+                      + projectId + "/downloads/" + downloadId;
+    
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Content-Type", "application/json")
+                // Si deseas limitar la llamada a un usuario en un contexto 2-legged,
+                // puedes agregar la cabecera x-user-id:
+                // .addHeader("x-user-id", "user_id_aqui")
+                .build();
+    
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException(
+                        "Unexpected code " + response 
+                        + ", body: " + (response.body() != null ? response.body().string() : "No body"));
+            }
+        
+            String responseBody = response.body().string();
+            System.out.println("Detalles de la descarga: " + responseBody);
+        }
+    }
+    
 }
