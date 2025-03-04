@@ -43,7 +43,7 @@ public class Main {
             System.out.println("");
 
             // Explorar un proyecto específico
-            String projectId = "b.76947f01-cc26-47db-9681-fff27e5430ce";
+            String projectId = "b.76947f01-cc26-47db-9681-fff27e5430ce"; /* 00 PRUEBA MODEL COORDINATION */
             String folderId = "urn:adsk.wipprod:fs.folder:co.D7F4NTwdRqqYqMaK-M01Yw";
             
             // Obtener los datos de un proyecto por el ID de proyecto
