@@ -120,6 +120,31 @@ public class Main {
             System.out.println(" ------------------------------------------------- ");
             Folders.listFolderContents(accessToken, projectId, itemId5); */
             // Folders.exploreFolder(accessToken, projectId, itemId);
+
+            /* CREATE A DOWNLOAD */
+
+            /* Step 1: Find the hub that has your resource
+             * Step 2: Find the project that has your resource
+             * Step 3: Find the resource item in a project folder
+             * Step 4: Find the storage location of the item
+             * Step 5: Find the versions of an item
+             * Step 6: Get the S3 URL
+             * Step 7: Download the item
+            */
+
+            String finalItemID = "urn:adsk.wipprod:dm.lineage:o_ojATdLTtOgyQMRonMejA";
+            getVersionId(accessToken, projectId, finalItemID);
+
+            System.out.println("");
+            System.out.println("------------------------");
+            System.out.println("");
+            Items.dataItem(accessToken, projectId, finalItemID);
+
+            System.out.println("");
+            System.out.println("------------------------");
+            System.out.println("");
+            Items.getItemVersions(accessToken, projectId, finalItemID);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
