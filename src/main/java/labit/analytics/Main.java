@@ -143,7 +143,7 @@ public class Main {
             System.out.println("");
             System.out.println("------------------------");
             System.out.println("");
-            Items.getItemVersions(accessToken, projectId, finalItemID);
+            buckets.getAppBuckets(accessToken);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -158,7 +158,7 @@ public class Main {
                 .add("client_id", CLIENT_ID)
                 .add("client_secret", CLIENT_SECRET)
                 .add("grant_type", "client_credentials")
-                .add("scope", "data:create data:read data:write")
+                .add("scope", "data:create data:read data:write bucket:read")
                 .build();
 
         Request request = new Request.Builder()
