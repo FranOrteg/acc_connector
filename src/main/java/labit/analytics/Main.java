@@ -133,7 +133,11 @@ public class Main {
             */
 
             String finalItemID = "urn:adsk.wipprod:dm.lineage:o_ojATdLTtOgyQMRonMejA";
-            getVersionId(accessToken, projectId, finalItemID);
+            String versionID = getVersionId(accessToken, projectId, finalItemID);
+            System.out.println("");
+            System.out.println("------------------------");
+            System.out.println("");
+            Versions.getVersions(accessToken, projectId, versionID);
 
             System.out.println("");
             System.out.println("------------------------");
@@ -143,7 +147,7 @@ public class Main {
             System.out.println("");
             System.out.println("------------------------");
             System.out.println("");
-            buckets.getAppBuckets(accessToken);
+            //buckets.getAppBuckets(accessToken);
 
         } catch (IOException e) {
             e.printStackTrace();

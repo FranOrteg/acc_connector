@@ -1,6 +1,8 @@
 package labit.analytics;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,9 +20,10 @@ public class Versions {
 
     public static void getVersions(String accessToken, String projectId, String versionId) throws IOException {
          OkHttpClient client = new OkHttpClient();
+         String encodedVersionID = URLEncoder.encode(versionId, StandardCharsets.UTF_8);
 
         Request request = new Request.Builder()
-                .url("https://developer.api.autodesk.com/data/v1/projects/" + projectId + "/versions/" + versionId + "")
+                .url("https://developer.api.autodesk.com/data/v1/projects/" + projectId + "/versions/" + encodedVersionID + "")
                 .addHeader("Authorization", "Bearer " + accessToken)
                 .addHeader("Content-Type", "application/json")
                 .build();
