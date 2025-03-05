@@ -149,6 +149,12 @@ public class Main {
             System.out.println("");
             //buckets.getAppBuckets(accessToken);
 
+            String bucketKey = "wip.dm.prod";
+            String objectKey = "a6d0c631-3edc-4298-b5e0-5168c0db387b.rvt";
+
+            buckets.getSignedUrl(accessToken, bucketKey, objectKey);
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -334,6 +340,8 @@ public class Main {
             }
         }
     }
+
+    /* INICIAR LA DESCARGA */
 
 
     /* PARSEAR Y MOSTRAR LOS PROYECTOS */

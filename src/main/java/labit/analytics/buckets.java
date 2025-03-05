@@ -14,10 +14,10 @@ public class buckets {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url("https://developer.api.autodesk.com/oss/v2/buckets")
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .addHeader("Content-Type", "application/json")
-                .build();
+        .url("https://developer.api.autodesk.com/oss/v2/buckets")
+        .addHeader("Authorization", "Bearer " + accessToken)
+        .addHeader("Content-Type", "application/json")
+        .build();
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
@@ -28,5 +28,31 @@ public class buckets {
             System.out.println("Buckets: " + responseBody);
             System.out.println("");
         }
+    }
+
+    /* Generate a signed URL to an object, which can be used to download it directly from S3. */
+    public static void getSignedUrl(String accessToken, String bucketKey, String object_Key) throws IOException{
+        
+        OkHttpClient client = new OkHttpClient();
+
+        String url = "https://developer.api.autodesk.com/oss/v2/buckets/" + bucketKey + "/objects/" + object_Key + "/signeds3download";
+
+        Request request = new Request.Builder()
+        .url(url)
+        .addHeader("Authorization", "Bearer " + accessToken)
+        .addHeader("Content-Type", "application/json")
+        .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
+            }
+        
+            String responseBody = response.body().string();
+            System.out.println("Signed S3 URL: " + responseBody);
+            System.out.println("");
+        
+        }
+
     }
 }
