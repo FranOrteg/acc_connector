@@ -139,7 +139,7 @@ public class Main {
              * Step 7: Download the item
             */
 
-            String finalItemID = "urn:adsk.wipprod:dm.lineage:o_ojATdLTtOgyQMRonMejA";
+            String finalItemID = "urn:adsk.wipprod:dm.lineage:SNMAjoiySZ-D2OHDxdZ0pg";
             String versionID = getVersionId(accessToken, projectId, finalItemID);
             System.out.println("");
             System.out.println("------------------------");
@@ -149,15 +149,15 @@ public class Main {
             System.out.println("");
             System.out.println("------------------------");
             System.out.println("");
-            Items.dataItem(accessToken, projectId, finalItemID);
+            String[] data = Items.dataItem(accessToken, projectId, finalItemID);
 
             System.out.println("");
             System.out.println("------------------------");
             System.out.println("");
             //buckets.getAppBuckets(accessToken);
 
-            String bucketKey = "wip.dm.prod";
-            String objectKey = "a6d0c631-3edc-4298-b5e0-5168c0db387b.rvt";
+            String bucketKey = data[0];
+            String objectKey = data[1];
 
             String signedUrl =  buckets.getSignedUrl(accessToken, bucketKey, objectKey);
 
@@ -165,7 +165,7 @@ public class Main {
             System.out.println("------------------------");
             System.out.println("");
             downloadFile(signedUrl);
-
+ 
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -244,56 +244,6 @@ public class Main {
         }
     }
 
-    /* SOLICITAR DESCARGA DE ARCHIVO */   
-    public static void createDownload(String accessToken, String projectId, String versionId, String fileType) throws IOException {
-        OkHttpClient client = new OkHttpClient();
-
-        // Cuerpo de la solicitud
-        JsonObject requestBody = new JsonObject();
-        JsonObject jsonapi = new JsonObject();
-        jsonapi.addProperty("version", "1.0");
-        requestBody.add("jsonapi", jsonapi);
-
-        JsonObject data = new JsonObject();
-        data.addProperty("type", "downloads");
-
-        JsonObject attributes = new JsonObject();
-        JsonObject format = new JsonObject();
-        format.addProperty("fileType", fileType);
-        attributes.add("format", format);
-        data.add("attributes", attributes);
-
-        JsonObject relationships = new JsonObject();
-        JsonObject source = new JsonObject();
-        JsonObject sourceData = new JsonObject();
-        sourceData.addProperty("type", "versions");
-        sourceData.addProperty("id", versionId);
-        source.add("data", sourceData);
-        relationships.add("source", source);
-        data.add("relationships", relationships);
-
-        requestBody.add("data", data);
-
-        // Solicitud HTTP
-        Request request = new Request.Builder()
-                .url("https://developer.api.autodesk.com/data/v1/projects/" + projectId + "/downloads")
-                .post(RequestBody.create(requestBody.toString(), okhttp3.MediaType.parse("application/vnd.api+json")))
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .addHeader("Content-Type", "application/vnd.api+json")
-                .build();
-
-        // Enviar la solicitud
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response + ", body: " + response.body().string());
-            }
-
-            // Respuesta exitosa
-            String responseBody = response.body().string();
-            System.out.println("Download job created successfully: " + responseBody);
-        }
-    }
-
     /* OBTENER EL VERSION ID DE UN ARCHIVO */
     public static String getVersionId(String accessToken, String projectId, String itemId) throws IOException {
         OkHttpClient client = new OkHttpClient();
@@ -357,7 +307,7 @@ public class Main {
     public static void downloadFile(String signedUrl) {
         // Ruta al escritorio del usuario
         String home = System.getProperty("user.home");
-        String downloadPath = home + File.separator + "Escritorio" + File.separator + "archivo_descargado.rvt";
+        String downloadPath = home + File.separator + "Escritorio" + File.separator + "archivo_descargado.nwc";
 
         try {
             // Convertir String a URI y luego a URL
@@ -402,7 +352,3 @@ public class Main {
         }
     }
 }
-
-/* Name: 00_Prueba Model Coordination
-Project ID: b.76947f01-cc26-47db-9681-fff27e5430ce
-Root Folder ID: urn:adsk.wipprod:fs.folder:co.D7F4NTwdRqqYqMaK-M01Yw */
