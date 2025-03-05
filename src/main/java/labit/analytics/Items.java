@@ -170,40 +170,45 @@ public class Items {
     /* EXTRAER EL BUCKET_KEY Y EL OBJECT_KEY */
     public static String[] extractBucketAndObjectKey(String jsonResponse) {
         JsonObject jsonObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
-
-        // Obtener la sección "included" donde está el almacenamiento
+    
+        // Obtener la sección "included" donde está la información del almacenamiento y archivo
         JsonArray includedArray = jsonObject.getAsJsonArray("included");
         if (includedArray == null || includedArray.size() == 0) {
             throw new IllegalStateException("No se encontraron datos de almacenamiento en la respuesta JSON.");
         }
-
+    
         JsonObject includedObject = includedArray.get(0).getAsJsonObject();
+        
+        // Obtener el nombre del archivo
+        String fileName = includedObject.getAsJsonObject("attributes").get("displayName").getAsString();
+    
+        // Obtener la URN de almacenamiento dentro de "relationships" -> "storage" -> "data"
         JsonObject storageData = includedObject.getAsJsonObject("relationships")
                                                .getAsJsonObject("storage")
                                                .getAsJsonObject("data");
-
-        // Obtener la URN completa (ejemplo: "urn:adsk.objects:os.object:wip.dm.prod/9c696903-31c6-4b01-8717-8d198644eb42.nwc")
-        String urn = storageData.get("id").getAsString();
-
-        // Extraer el bucketKey y objectKey correctamente
+    
+        String urn = storageData.get("id").getAsString(); // Ejemplo: "urn:adsk.objects:os.object:wip.dm.prod/archivo.rvt"
+    
+        // Extraer bucketKey y objectKey de la URN
         if (!urn.startsWith("urn:adsk.objects:os.object:")) {
             throw new IllegalStateException("URN de almacenamiento no tiene el formato esperado: " + urn);
         }
-
-        // Eliminar "urn:adsk.objects:os.object:" y dividir
+    
         String[] urnParts = urn.replace("urn:adsk.objects:os.object:", "").split("/");
-
         if (urnParts.length < 2) {
             throw new IllegalStateException("No se pudo extraer bucketKey y objectKey del URN: " + urn);
         }
-
+    
         String bucketKey = urnParts[0]; // "wip.dm.prod"
-        String objectKey = urnParts[1]; // "9c696903-31c6-4b01-8717-8d198644eb42.nwc"
-
+        String objectKey = urnParts[1]; // "archivo.rvt"
+    
+        // Mostrar en consola para depuración
         System.out.println("Bucket Key extraído: " + bucketKey);
         System.out.println("Object Key extraído: " + objectKey);
-
-        return new String[]{bucketKey, objectKey};
+        System.out.println("Nombre del archivo extraído: " + fileName);
+    
+        return new String[]{bucketKey, objectKey, fileName};
     }
+    
 
 }

@@ -121,6 +121,7 @@ public class Main {
             Folders.listFolderContents(accessToken, projectId, itemId2);
             System.out.println("");
 
+
             /*Folders.listFolderContents(accessToken, projectId, itemId3);
             System.out.println("");
             Folders.listFolderContents(accessToken, projectId, itemId4);
@@ -139,7 +140,7 @@ public class Main {
              * Step 7: Download the item
             */
 
-            String finalItemID = "urn:adsk.wipprod:dm.lineage:SNMAjoiySZ-D2OHDxdZ0pg";
+            String finalItemID = "urn:adsk.wipprod:dm.lineage:VvOC3BqVTEKnoPrdX5uM_Q";
             String versionID = getVersionId(accessToken, projectId, finalItemID);
             System.out.println("");
             System.out.println("------------------------");
@@ -158,13 +159,17 @@ public class Main {
 
             String bucketKey = data[0];
             String objectKey = data[1];
+            String itemName = data[2];
 
             String signedUrl =  buckets.getSignedUrl(accessToken, bucketKey, objectKey);
 
             System.out.println("");
             System.out.println("------------------------");
             System.out.println("");
-            downloadFile(signedUrl);
+            
+            System.out.println("Nombre del archivo a descargar: " + itemName);
+            
+            downloadFile(signedUrl,itemName);
  
 
         } catch (IOException e) {
@@ -304,10 +309,10 @@ public class Main {
     }
     
     /* INICIAR LA DESCARGA */
-    public static void downloadFile(String signedUrl) {
+    public static void downloadFile(String signedUrl, String fileName) {
         // Ruta al escritorio del usuario
         String home = System.getProperty("user.home");
-        String downloadPath = home + File.separator + "Escritorio" + File.separator + "archivo_descargado.nwc";
+        String downloadPath = home + File.separator + "Escritorio" + File.separator + fileName;
 
         try {
             // Convertir String a URI y luego a URL
