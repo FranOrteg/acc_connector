@@ -2,6 +2,9 @@ package labit.analytics;
 
 import java.io.IOException;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -31,7 +34,7 @@ public class buckets {
     }
 
     /* Generate a signed URL to an object, which can be used to download it directly from S3. */
-    public static void getSignedUrl(String accessToken, String bucketKey, String object_Key) throws IOException{
+    public static String getSignedUrl(String accessToken, String bucketKey, String object_Key) throws IOException{
         
         OkHttpClient client = new OkHttpClient();
 
@@ -52,7 +55,14 @@ public class buckets {
             System.out.println("Signed S3 URL: " + responseBody);
             System.out.println("");
         
+            return extractSignedUrl(responseBody);
         }
 
+    }
+
+    /* MÉTODO PARA EXTRAER LA URL FIRMADA DEL JSON */
+    public static String extractSignedUrl(String jsonResponse) {
+        JsonObject jsonObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
+        return jsonObject.get("url").getAsString();
     }
 }

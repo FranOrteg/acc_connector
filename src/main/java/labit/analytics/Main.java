@@ -1,6 +1,13 @@
 package labit.analytics;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -152,7 +159,12 @@ public class Main {
             String bucketKey = "wip.dm.prod";
             String objectKey = "a6d0c631-3edc-4298-b5e0-5168c0db387b.rvt";
 
-            buckets.getSignedUrl(accessToken, bucketKey, objectKey);
+            String signedUrl =  buckets.getSignedUrl(accessToken, bucketKey, objectKey);
+
+            System.out.println("");
+            System.out.println("------------------------");
+            System.out.println("");
+            downloadFile(signedUrl);
 
 
         } catch (IOException e) {
@@ -340,9 +352,38 @@ public class Main {
             }
         }
     }
-
+    
     /* INICIAR LA DESCARGA */
+    public static void downloadFile(String signedUrl) {
+        // Ruta al escritorio del usuario
+        String home = System.getProperty("user.home");
+        String downloadPath = home + File.separator + "Escritorio" + File.separator + "archivo_descargado.rvt";
 
+        try {
+            // Convertir String a URI y luego a URL
+            URL url = new URI(signedUrl).toURL();
+
+            // Abrir la conexión y descargar el archivo
+            try (InputStream in = url.openStream();
+                 FileOutputStream out = new FileOutputStream(downloadPath)) {
+                
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                
+                // Leer y escribir el archivo en bloques de 8 KB
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+
+                System.out.println("Archivo descargado con éxito en: " + downloadPath);
+            } catch (IOException e) {
+                System.err.println("Error descargando el archivo: " + e.getMessage());
+            }
+
+        } catch (URISyntaxException | MalformedURLException e) {
+            System.err.println("Error en la URL firmada: " + e.getMessage());
+        }
+    }
 
     /* PARSEAR Y MOSTRAR LOS PROYECTOS */
     public static void parseAndPrintProjects(String responseBody) {
