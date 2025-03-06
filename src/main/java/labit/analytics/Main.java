@@ -140,7 +140,7 @@ public class Main {
              * Step 7: Download the item
             */
 
-            String finalItemID = "urn:adsk.wipprod:dm.lineage:VvOC3BqVTEKnoPrdX5uM_Q";
+            String finalItemID = "urn:adsk.wipprod:dm.lineage:o_ojATdLTtOgyQMRonMejA";
             String versionID = getVersionId(accessToken, projectId, finalItemID);
             System.out.println("");
             System.out.println("------------------------");
@@ -155,13 +155,13 @@ public class Main {
             System.out.println("");
             System.out.println("------------------------");
             System.out.println("");
-            //buckets.getAppBuckets(accessToken);
+            buckets.getAppBuckets(accessToken);
 
             String bucketKey = data[0];
             String objectKey = data[1];
             String itemName = data[2];
 
-            String signedUrl =  buckets.getSignedUrl(accessToken, bucketKey, objectKey);
+            //String signedUrl =  buckets.getSignedUrl(accessToken, bucketKey, objectKey);
 
             System.out.println("");
             System.out.println("------------------------");
@@ -169,9 +169,9 @@ public class Main {
             
             System.out.println("Nombre del archivo a descargar: " + itemName);
             
-            downloadFile(signedUrl,itemName);
+            //downloadFile(signedUrl,itemName);
  
-
+            getVersionId(accessToken, projectId, finalItemID);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -185,7 +185,7 @@ public class Main {
                 .add("client_id", CLIENT_ID)
                 .add("client_secret", CLIENT_SECRET)
                 .add("grant_type", "client_credentials")
-                .add("scope", "data:create data:read data:write bucket:read")
+                .add("scope", "data:create data:read data:write bucket:create bucket:read bucket:delete viewables:read")
                 .build();
 
         Request request = new Request.Builder()
